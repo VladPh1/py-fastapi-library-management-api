@@ -16,6 +16,10 @@ def get_author_by_name(db: Session, name: str):
     return db.query(models.DBAuthor).where(models.DBAuthor.name == name).first()
 
 
+def get_author_by_id(db: Session, author_id: int):
+    return db.query(models.DBAuthor).where(models.DBAuthor.id == author_id).first()
+
+
 def create_author(db: Session, author: schemas.AuthorCreate):
     db_author = models.DBAuthor(
         name=author.name,
@@ -30,7 +34,7 @@ def create_author(db: Session, author: schemas.AuthorCreate):
 
 def get_book_list(
         db: Session,
-        author: str | None = None,
+        author_id: int | None = None,
         skip: int = 0,
         limit: int = 100
 ):
@@ -38,7 +42,7 @@ def get_book_list(
 
     if author is not None:
         queryset = queryset.filter(
-            models.DBBook.author.has(name=author)
+            models.DBBook.author_id.has(name=author_id)
         )
     return queryset.offset(skip).limit(limit).all()
 

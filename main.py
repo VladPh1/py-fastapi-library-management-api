@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 import crud
 import schemas
-from database.engine import SessionLocal
+from database.database import SessionLocal
 
 app = FastAPI()
 
@@ -17,8 +17,15 @@ def get_db() -> Session:
 
 
 @app.get("/authors/", response_model=list[schemas.Author])
-def read_authors(db: Session = Depends(get_db)):
-    return crud.get_all_authors(db=db)
+def read_authors(db: Session = Depends(get_db),
+                 skip: int = 0,
+                 limit: int = 100,
+                 ):
+    return crud.get_all_authors(
+        db=db,
+        skip=skip,
+        limit=limit,
+    )
 
 
 @app.post("/authors/", response_model=schemas.Author)
@@ -38,11 +45,16 @@ def create_author(
 @app.get("/books/", response_model=list[schemas.Book])
 def read_books(
         author: str | None = None,
+        skip: int = 0,
+        limit: int = 100,
         db: Session = Depends(get_db)
 ):
     return crud.get_book_list(
         db=db,
         author=author,
+        skip=skip,
+        limit=limit,
+
     )
 
 
