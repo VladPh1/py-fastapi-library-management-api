@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 import schemas
-from database import models
+import models
 
 
 def get_all_authors(
@@ -17,6 +17,10 @@ def get_author_by_name(db: Session, name: str):
 
 
 def get_author_by_id(db: Session, author_id: int):
+    return db.query(models.DBAuthor).where(models.DBAuthor.id == author_id).first()
+
+
+def get_author(db: Session, author_id: int):
     return db.query(models.DBAuthor).where(models.DBAuthor.id == author_id).first()
 
 
@@ -40,9 +44,9 @@ def get_book_list(
 ):
     queryset = db.query(models.DBBook)
 
-    if author is not None:
+    if queryset is not None:
         queryset = queryset.filter(
-            models.DBBook.author_id.has(name=author_id)
+            models.DBBook.author_id == author_id
         )
     return queryset.offset(skip).limit(limit).all()
 
